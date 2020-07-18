@@ -35,11 +35,10 @@ class SeaOfWonders(commands.Cog):
         else:
             await ctx.send("I'm afraid something went wrong. Use `!help cd` to see how to use the command.")
 
-    @tasks.loop(minutes=1.0)
+    @tasks.loop(seconds=30)
     async def checkCooldowns(self):
         now_utc = datetime.datetime.now(timezone('UTC'))
         now_pacific = now_utc.astimezone(timezone('US/Pacific')).strftime('%H:%M')
-        print(now_pacific)
         names = []
         for i in self.cooldowns:
             if self.cooldowns[i] == now_pacific:
