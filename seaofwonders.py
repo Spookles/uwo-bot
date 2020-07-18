@@ -31,7 +31,6 @@ class SeaOfWonders(commands.Cog):
                     self.cooldowns[i] = time
                     names+=i+", "
                 names = names[:-2]
-                print(names)
                 await ctx.send("Cooldown set for **{}** at **{}**".format(names, time))
         else:
             await ctx.send("I'm afraid something went wrong. Use `!help cd` to see how to use the command.")
