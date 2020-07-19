@@ -4,6 +4,7 @@ import re
 import threading
 import time
 import datetime
+import random
 from pytz import timezone
 from discord.ext import tasks, commands
 
@@ -47,18 +48,16 @@ class SeaOfWonders(commands.Cog):
             await self.rm(names, False)
 
     async def rm(self, names, manual):
-        index = 0
         for i in list(self.cooldowns):
-            if i == names[index]:
+            if i in names:
                 del self.cooldowns[i]
-                index+=1
-                if not manual:
-                    await self.ctx.send("**{}** your cooldown is finished, back to fishing!".format(i))
+                if manual:
+                    await self.ctx.send("**{}**, {}".format(i, await self.return_to_fishing()))
                 else:
                     await self.ctx.send("Removed **{}** from cooldown list.".format(i))
         self.checkCooldowns.restart()
 
-    @commands.command(brief="", description="")
+    @commands.command(brief="Use to remove players from list", description="This command essentially does the opposite of `!cd`. You can leave out the timestamp, just have to say who you want to remove.\n!remove Person1 Person2 Person3 ... ...")
     async def remove(self, ctx, *args):
         names = []
         if not args:
@@ -103,3 +102,31 @@ class SeaOfWonders(commands.Cog):
     async def fishsticks(self, ctx):
         self.fishcounter+=1
         await ctx.send("Good job, you killed Huggles **{}** times".format(self.fishcounter))
+
+    @staticmethod
+    async def return_to_fishing():
+        r = random.randint(0, 10)
+        if r == 0:
+            return "I'm pleased to announce, you can go back _trying_ to kill me."
+        elif r == 1:
+            return "goodluck trying to spawn me again."
+        elif r == 2:
+            return "back to fishing!"
+        elif r == 3:
+            return "you know the definition of insanity? Oh well, you can try again if you'd like."
+        elif r == 4:
+            return "you're welcome back into my lair."
+        elif r == 5:
+            return "🔔🔔🔔 IT IS TIME."
+        elif r == 4:
+            return "grab your friends and try me, _bitch_."
+        elif r == 6:
+            return "have fun in the Sea of Wonders."
+        elif r == 7:
+            return "https://www.youtube.com/watch?v=tkzY_VwNIek"
+        elif r == 8:
+            return "will I turn into 🍣 this time?"
+        elif r == 9:
+            return "good thing my species have a great fertility rate."
+        else:
+            return "🎣 you know what that means."
