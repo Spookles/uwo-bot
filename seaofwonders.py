@@ -5,6 +5,7 @@ import threading
 import time
 import datetime
 import random
+import json
 from pytz import timezone
 from discord.ext import tasks, commands
 
@@ -51,7 +52,7 @@ class SeaOfWonders(commands.Cog):
         for i in list(self.cooldowns):
             if i in names:
                 del self.cooldowns[i]
-                if manual:
+                if not manual:
                     await self.ctx.send("**{}**, {}".format(i, await self.return_to_fishing()))
                 else:
                     await self.ctx.send("Removed **{}** from cooldown list.".format(i))

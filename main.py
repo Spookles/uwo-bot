@@ -5,6 +5,7 @@ from discord.ext import tasks, commands
 import asyncio
 import datetime
 import random
+import json
 from pytz import timezone
 from seaofwonders import SeaOfWonders
 from unchartedwatersonline import UnchartedWatersOnline
@@ -16,13 +17,19 @@ bot = commands.Bot(command_prefix='!')
 
 @bot.event
 async def on_ready():
-    bot.add_cog(UnchartedWatersOnline(bot))
-    bot.add_cog(SeaOfWonders(bot))
     for guild in bot.guilds:
         print(
             f'{bot.user} is connected to the following guild:\n'
             f'{guild.name}(id: {guild.id})'
         )
+
+        mainChannel = {}
+        for channel in guild.channels:
+            if channel.name == "general":
+                mainChannel = channel
+        
+    bot.add_cog(UnchartedWatersOnline(bot))
+    bot.add_cog(SeaOfWonders(bot))
 
 @bot.event
 async def on_command_error(ctx, error):
