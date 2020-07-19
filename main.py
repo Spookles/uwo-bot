@@ -7,29 +7,35 @@ import datetime
 import random
 import json
 from pytz import timezone
+from server import Server
 from seaofwonders import SeaOfWonders
 from unchartedwatersonline import UnchartedWatersOnline
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='$')
+servers = {}
 
 @bot.event
 async def on_ready():
+    print(f'{bot.user} is connected to the following guilds:')
     for guild in bot.guilds:
-        print(
-            f'{bot.user} is connected to the following guild:\n'
-            f'{guild.name}(id: {guild.id})'
-        )
-
+        print(f'{guild.name}(id: {guild.id})')
         mainChannel = {}
+        list = {}
         for channel in guild.channels:
             if channel.name == "general":
                 mainChannel = channel
-        
+
+        if not mainChannel:
+            print("Could not find a general channel for server: {}".format(guild.name))
+
+        server = Server(guild.id, mainChannel, list)
+        servers[guild.id] = server
+
     bot.add_cog(UnchartedWatersOnline(bot))
-    bot.add_cog(SeaOfWonders(bot))
+    bot.add_cog(SeaOfWonders(bot, servers))
 
 @bot.event
 async def on_command_error(ctx, error):

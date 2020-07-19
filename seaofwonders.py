@@ -11,26 +11,25 @@ from discord.ext import tasks, commands
 
 class SeaOfWonders(commands.Cog):
     """Sea of Wonders section of the bot."""
-    def __init__(self, bot):
+    def __init__(self, bot, servers):
         self.fishcounter = 0
         self.bot = bot
         self.cooldowns = {}
         self.checkCooldowns.start()
-        self.ctx = {}
+        self.servers = servers
 
     @commands.command(brief="Set your own cooldown", description="Set your cooldown by use of !cd HHMM or HH:MM\n1234 or 12:34\nTo add multiple people, or a specific person use the command as followed:\n!cd HHMM Person1 Person2 Person3 ... ... <-- Important, use spaces between the names.")
     async def cd(self, ctx, time, *args):
-        self.ctx = ctx
         if re.match("^([0][0-9]|[1][0-9]|[2][0-3]):?([0-5][0-9])$", time) is not None:
             if ':' not in time:
                 time = time[ : 2] + ":" + time[2 : ]
             if not args:
-                self.cooldowns[ctx.author.display_name] = time
+                self.servers[ctx.guild.id].list[ctx.author.display_name] = time
                 await ctx.send("**{}** your cooldown is set for **{}**".format(ctx.author.display_name, time))
             else:
                 names = ""
                 for i in args:
-                    self.cooldowns[i] = time
+                    self.servers[ctx.guild.id].list[i] = time
                     names+=i+", "
                 names = names[:-2]
                 await ctx.send("Cooldown set for **{}** at **{}**".format(names, time))
@@ -41,21 +40,25 @@ class SeaOfWonders(commands.Cog):
     async def checkCooldowns(self):
         now_utc = datetime.datetime.now(timezone('UTC'))
         now_pacific = now_utc.astimezone(timezone('US/Pacific')).strftime('%H:%M')
-        names = []
-        for i in self.cooldowns:
-            if self.cooldowns[i] == now_pacific:
-                names.append(i)
-        if names:
-            await self.rm(names, False)
+        for server in self.servers:
+            print(1)
+            names = []
+            for i in self.servers[server].list:
+                print(2)
+                if self.servers[server].list[i] == now_pacific:
+                    names.append(i)
+            if names:
+                print(3)
+                await self.rm(names, self.servers[server].channel, False)
 
-    async def rm(self, names, manual):
-        for i in list(self.cooldowns):
+    async def rm(self, names, channel, manual):
+        for i in list(self.servers[channel.guild.id].list):
             if i in names:
-                del self.cooldowns[i]
+                del self.servers[channel.guild.id].list[i]
                 if not manual:
-                    await self.ctx.send("**{}**, {}".format(i, await self.return_to_fishing()))
+                    await channel.send("**{}**, {}".format(i, await self.return_to_fishing()))
                 else:
-                    await self.ctx.send("Removed **{}** from cooldown list.".format(i))
+                    await channel.send("Removed **{}** from cooldown list.".format(i))
         self.checkCooldowns.restart()
 
     @commands.command(brief="Use to remove players from list", description="This command essentially does the opposite of `!cd`. You can leave out the timestamp, just have to say who you want to remove.\n!remove Person1 Person2 Person3 ... ...")
@@ -65,7 +68,7 @@ class SeaOfWonders(commands.Cog):
             names.append(ctx.author.display_name)
         else:
             names = args
-        await self.rm(names, True)
+        await self.rm(names, self.servers[ctx.guild.id].channel, True)
 
     @commands.command(brief="Lists all players that have set their cooldowns", description="Shows an embed that tells you the cooldowns of everyone that is known.\nIt also shows the amount of time left till CD is finished.\nThis is all in server time, aka PDT.")
     async def list(self, ctx):
@@ -76,10 +79,10 @@ class SeaOfWonders(commands.Cog):
         now_utc = datetime.datetime.now(timezone('UTC'))
         now_pacific = now_utc.astimezone(timezone('US/Pacific'))  
 
-        for i in self.cooldowns:
+        for i in self.servers[ctx.guild.id].list:
             names+=i+"\n"
-            cd+=self.cooldowns[i]+"\n"
-            date_time_obj = datetime.datetime.strptime(self.cooldowns[i], '%H:%M')
+            cd+=self.servers[ctx.guild.id].list[i]+"\n"
+            date_time_obj = datetime.datetime.strptime(self.servers[ctx.guild.id].list[i], '%H:%M')
             now_pacific = now_pacific.replace(tzinfo=None)
             diff = date_time_obj - now_pacific
             minute = diff.seconds//60%60
