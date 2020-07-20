@@ -1,0 +1,9 @@
+20-jul-2020
+    **Update:**
+    `!cd` & `!remove` now tag you if you do not specifically mention a name
+    Huggles now properly works across multiple servers with each their own data
+    Huggles has a brain now, it can store data in files meaning restarts does not wipe everything
+    Easy addition to dialogues, if you have any suggestions let me know
+
+    **Addition**
+    You can now whack people with `!tail 'name'`

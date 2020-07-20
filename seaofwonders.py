@@ -8,6 +8,7 @@ import random
 import json
 from pytz import timezone
 from discord.ext import tasks, commands
+from global_func import GlobalFunc
 
 class SeaOfWonders(commands.Cog):
     """Sea of Wonders section of the bot."""
@@ -20,58 +21,66 @@ class SeaOfWonders(commands.Cog):
 
     @commands.command(brief="Set your own cooldown", description="Set your cooldown by use of !cd HHMM or HH:MM\n1234 or 12:34\nTo add multiple people, or a specific person use the command as followed:\n!cd HHMM Person1 Person2 Person3 ... ... <-- Important, use spaces between the names.")
     async def cd(self, ctx, time, *args):
+        self.servers = await GlobalFunc.read("server_data")
+        server = self.servers[str(ctx.guild.id)]
+        channel = await GlobalFunc.getChannel(ctx.guild.channels, server.channelID)
         if re.match("^([0][0-9]|[1][0-9]|[2][0-3]):?([0-5][0-9])$", time) is not None:
             if ':' not in time:
                 time = time[ : 2] + ":" + time[2 : ]
             if not args:
-                self.servers[ctx.guild.id].list[ctx.author.display_name] = time
-                await ctx.send("**{}** your cooldown is set for **{}**".format(ctx.author.display_name, time))
+                server.list[ctx.author.mention] = time
+                await channel.send("**{}** your cooldown is set for **{}**".format(ctx.author.mention, time))
             else:
                 names = ""
                 for i in args:
-                    self.servers[ctx.guild.id].list[i] = time
+                    server.list[i] = time
                     names+=i+", "
                 names = names[:-2]
-                await ctx.send("Cooldown set for **{}** at **{}**".format(names, time))
+                await channel.send("Cooldown set for **{}** at **{}**".format(names, time))
         else:
             await ctx.send("I'm afraid something went wrong. Use `!help cd` to see how to use the command.")
+        await GlobalFunc.write(self.servers, "server_data")
 
     @tasks.loop(seconds=30)
     async def checkCooldowns(self):
         now_utc = datetime.datetime.now(timezone('UTC'))
         now_pacific = now_utc.astimezone(timezone('US/Pacific')).strftime('%H:%M')
         for server in self.servers:
-            print(1)
             names = []
             for i in self.servers[server].list:
-                print(2)
                 if self.servers[server].list[i] == now_pacific:
                     names.append(i)
             if names:
-                print(3)
-                await self.rm(names, self.servers[server].channel, False)
+                await self.rm(names, self.servers[server].id, self.servers[server].channelID, False)
 
-    async def rm(self, names, channel, manual):
-        for i in list(self.servers[channel.guild.id].list):
+    async def rm(self, names, server, channel, manual):
+        self.servers = await GlobalFunc.read("server_data")
+        server = self.servers[str(server)]
+        channel = await GlobalFunc.getChannelFromGuild(self.bot.guilds, server)
+        for i in list(server.list):
             if i in names:
-                del self.servers[channel.guild.id].list[i]
+                del server.list[i]
                 if not manual:
-                    await channel.send("**{}**, {}".format(i, await self.return_to_fishing()))
+                    await channel.send("**{}**, {}".format(i, await GlobalFunc.getRandomDialogue("fishing")))
+                    print("---")
                 else:
                     await channel.send("Removed **{}** from cooldown list.".format(i))
         self.checkCooldowns.restart()
+        await GlobalFunc.write(self.servers, "server_data")
 
     @commands.command(brief="Use to remove players from list", description="This command essentially does the opposite of `!cd`. You can leave out the timestamp, just have to say who you want to remove.\n!remove Person1 Person2 Person3 ... ...")
     async def remove(self, ctx, *args):
         names = []
         if not args:
-            names.append(ctx.author.display_name)
+            names.append(ctx.author.mention)
         else:
             names = args
-        await self.rm(names, self.servers[ctx.guild.id].channel, True)
+        await self.rm(names, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True)
 
     @commands.command(brief="Lists all players that have set their cooldowns", description="Shows an embed that tells you the cooldowns of everyone that is known.\nIt also shows the amount of time left till CD is finished.\nThis is all in server time, aka PDT.")
     async def list(self, ctx):
+        self.servers = await GlobalFunc.read("server_data")
+        server = self.servers[str(ctx.guild.id)]
         names = ""
         cd = ""
         eta = ""
@@ -79,10 +88,10 @@ class SeaOfWonders(commands.Cog):
         now_utc = datetime.datetime.now(timezone('UTC'))
         now_pacific = now_utc.astimezone(timezone('US/Pacific'))  
 
-        for i in self.servers[ctx.guild.id].list:
+        for i in server.list:
             names+=i+"\n"
-            cd+=self.servers[ctx.guild.id].list[i]+"\n"
-            date_time_obj = datetime.datetime.strptime(self.servers[ctx.guild.id].list[i], '%H:%M')
+            cd+=server.list[i]+"\n"
+            date_time_obj = datetime.datetime.strptime(server.list[i], '%H:%M')
             now_pacific = now_pacific.replace(tzinfo=None)
             diff = date_time_obj - now_pacific
             minute = diff.seconds//60%60
@@ -104,33 +113,11 @@ class SeaOfWonders(commands.Cog):
     
     @commands.command(brief="", description="")
     async def fishsticks(self, ctx):
-        self.fishcounter+=1
-        await ctx.send("Good job, you killed Huggles **{}** times".format(self.fishcounter))
-
-    @staticmethod
-    async def return_to_fishing():
-        r = random.randint(0, 10)
-        if r == 0:
-            return "I'm pleased to announce, you can go back _trying_ to kill me."
-        elif r == 1:
-            return "goodluck trying to spawn me again."
-        elif r == 2:
-            return "back to fishing!"
-        elif r == 3:
-            return "you know the definition of insanity? Oh well, you can try again if you'd like."
-        elif r == 4:
-            return "you're welcome back into my lair."
-        elif r == 5:
-            return "🔔🔔🔔 IT IS TIME."
-        elif r == 4:
-            return "grab your friends and try me, _bitch_."
-        elif r == 6:
-            return "have fun in the Sea of Wonders."
-        elif r == 7:
-            return "https://www.youtube.com/watch?v=tkzY_VwNIek"
-        elif r == 8:
-            return "will I turn into 🍣 this time?"
-        elif r == 9:
-            return "good thing my species have a great fertility rate."
-        else:
-            return "🎣 you know what that means."
+        self.servers = await GlobalFunc.read("server_data")
+        fishcounter = self.servers[str(ctx.guild.id)].fishcounter
+        fishcounter = int(fishcounter)
+        fishcounter += 1
+        fishcounter = str(fishcounter)
+        self.servers[str(ctx.guild.id)].fishcounter = fishcounter
+        await ctx.send("Good job, you killed Huggles **{}** times".format(fishcounter))
+        await GlobalFunc.write(self.servers, "server_data")
