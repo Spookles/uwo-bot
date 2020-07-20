@@ -7,3 +7,6 @@
 
     **Addition**
     You can now whack people with `!tail 'name'`
+    
+    **Todo**
+    Creating a command to set the channel for Huggles to talk in. Servers currently _need_ a 'general' text channel for him to work.
