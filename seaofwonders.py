@@ -29,14 +29,14 @@ class SeaOfWonders(commands.Cog):
                 time = time[ : 2] + ":" + time[2 : ]
             if not args:
                 server.list[ctx.author.mention] = time
-                await channel.send("**{}** your cooldown is set for **{}**".format(ctx.author.mention, time))
+                await channel.send("**{}** your cooldown is set for **{}** and that it is in **{}**".format(ctx.author.mention, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
             else:
                 names = ""
                 for i in args:
                     server.list[i] = time
                     names+=i+", "
                 names = names[:-2]
-                await channel.send("Cooldown set for **{}** at **{}**".format(names, time))
+                await channel.send("Cooldown set for **{}** at **{}** and that it is in **{}**".format(names, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
         else:
             await ctx.send("I'm afraid something went wrong. Use `!help cd` to see how to use the command.")
         await GlobalFunc.write(self.servers, "server_data")
@@ -62,7 +62,6 @@ class SeaOfWonders(commands.Cog):
                 del server.list[i]
                 if not manual:
                     await channel.send("**{}**, {}".format(i, await GlobalFunc.getRandomDialogue("fishing")))
-                    print("---")
                 else:
                     await channel.send("Removed **{}** from cooldown list.".format(i))
         self.checkCooldowns.restart()
@@ -85,18 +84,10 @@ class SeaOfWonders(commands.Cog):
         cd = ""
         eta = ""
 
-        now_utc = datetime.datetime.now(timezone('UTC'))
-        now_pacific = now_utc.astimezone(timezone('US/Pacific'))  
-
         for i in server.list:
             names+=i+"\n"
             cd+=server.list[i]+"\n"
-            date_time_obj = datetime.datetime.strptime(server.list[i], '%H:%M')
-            now_pacific = now_pacific.replace(tzinfo=None)
-            diff = date_time_obj - now_pacific
-            minute = diff.seconds//60%60
-            hour = diff.seconds//3600
-            eta+=f"{hour:02}:{minute:02}"+"\n"
+            eta += await GlobalFunc.calculateETA(datetime.datetime.strptime(server.list[i], '%H:%M'))
 
         if not names:
             names = "none"

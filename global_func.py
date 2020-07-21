@@ -2,6 +2,8 @@ import discord
 from discord.ext import tasks, commands
 import jsonpickle
 import random
+import datetime
+from pytz import timezone
 
 class GlobalFunc():
     """Functions that get used by multiple cogs."""
@@ -39,3 +41,15 @@ class GlobalFunc():
         dialogue = await GlobalFunc.read("dialogue")
         r = random.randint(0, len(dialogue[type])-1)
         return dialogue[type][str(r)]
+
+    @staticmethod
+    async def calculateETA(end_time):
+            now_utc = datetime.datetime.now(timezone('UTC'))
+            now_pacific = now_utc.astimezone(timezone('US/Pacific'))  
+            date_time_obj = end_time
+            now_pacific = now_pacific.replace(tzinfo=None)
+            diff = date_time_obj - now_pacific
+            minute = diff.seconds//60%60
+            hour = diff.seconds//3600
+            eta = f"{hour:02}:{minute:02}"+"\n"
+            return eta
