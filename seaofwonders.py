@@ -43,8 +43,10 @@ class SeaOfWonders(commands.Cog):
 
     @tasks.loop(seconds=30)
     async def checkCooldowns(self):
+        self.servers = await GlobalFunc.read("server_data")
         now_utc = datetime.datetime.now(timezone('UTC'))
         now_pacific = now_utc.astimezone(timezone('US/Pacific')).strftime('%H:%M')
+        print(now_pacific)
         for server in self.servers:
             names = []
             for i in self.servers[server].list:
