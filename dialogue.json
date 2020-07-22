@@ -13,7 +13,9 @@
         "10": "Anytime.",
         "11": "It was the least I could do.",
         "12": "Glad to help.",
-        "13": "You can thank me by feeding me players!"
+        "13": "You can thank me by feeding me players!",
+	"14": "Please bring me some tasty sailors as payment.",
+	"15": "You're welcome! I miss hugging y'all though."
     },
     "fishing": {
         "1": "I'm pleased to announce, you can go back to _trying_ to kill me.",
@@ -30,7 +32,17 @@
         "12": "zzz.. **pop** huh what. Oh. I cleaned up, you can come now.",
         "13": "I'm hungry, feed me.",
         "14": "been a while since I've seen you, how about you come visit again?",
-        "15": "I promise I will show up!"
+        "15": "I promise I will show up!",
+	"16": "please come back, I'm sailor-hungry!",
+	"17": "it's time for huggies.",
+	"18": "It's nom nom time!",
+	"19": "I'm in the mood for some Italian today, so please bring along Venetian crewmembers this time.",
+	"20": "stop hiring Spanish sailors already, they're too spicy!",
+	"21": "do you happen to know what wine goes well with your crew?",
+	"22": "good news! I've been lobbying KOEI to reduce my encounter rate, and I think they may do it.",
+	"23": "be warned, I'm just addicted to hugs!",
+	"24": "you know, before you voyagers began attacking me, I used to have a social life.",
+	"25": "why do I always have to have the humorous catch phrases? Why can't YOU say something once in a while?"
     },
     "tail": {
         "0": "get whacked.",
@@ -43,6 +55,8 @@
         "7": "I won't show up next time because of you.",
         "8": "oh. Him again.. **whack**.",
         "9": "may bad nanban rates be upon thy.",
-        "10": "guess who's not getting any rewards next time."
+        "10": "guess who's not getting any rewards next time.",
+	"11": "here, have a random -1200 fire tick for ya!",
+	"12": "_sings_ Got a whale of a tail to smack you with"
     }
 }

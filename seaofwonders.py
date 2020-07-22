@@ -45,6 +45,7 @@ class SeaOfWonders(commands.Cog):
     async def checkCooldowns(self):
         now_utc = datetime.datetime.now(timezone('UTC'))
         now_pacific = now_utc.astimezone(timezone('US/Pacific')).strftime('%H:%M')
+        print(now_pacific)
         for server in self.servers:
             names = []
             for i in self.servers[server].list:
