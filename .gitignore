@@ -130,3 +130,6 @@ dmypy.json
 
 # uwo-bot
 server_data.json
+
+#vscode
+.vscode
