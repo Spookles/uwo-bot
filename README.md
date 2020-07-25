@@ -27,5 +27,7 @@ Your Discord server needs a chatting channel named `general`. As Huggles needs a
 
 ## How to run
 Once the packages are installed and the .env file is added all that is left is giving a life to Huggles!
-In your terminal type: `python3 main.py` and you should get greeted by a list of Discord servers your Huggles is connected to!
+In your terminal type: `python3 main.py` and you should get greeted by a list of Discord servers your Huggles is connected to!  
+
+To test Huggles type `!how` in a Discord channel.
 
