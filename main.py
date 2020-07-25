@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 import discord
 from discord.ext import tasks, commands
-import asyncio
 import datetime
 import random
 import json
