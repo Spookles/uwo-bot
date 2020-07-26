@@ -40,7 +40,7 @@ class SeaOfWonders(commands.Cog):
             await ctx.send("I'm afraid something went wrong. Use `!help cd` to see how to use the command.")
         await GlobalFunc.write(self.servers, "server_data")
 
-    @tasks.loop(seconds=30)
+    @tasks.loop(seconds=60)
     async def checkCooldowns(self):
         now_utc = datetime.datetime.now(timezone('UTC'))
         now_pacific = now_utc.astimezone(timezone('US/Pacific')).strftime('%H:%M')
@@ -48,7 +48,7 @@ class SeaOfWonders(commands.Cog):
         for server in self.servers:
             names = []
             for i in self.servers[server].list:
-                if self.servers[server].list[i] == now_pacific:
+                if self.servers[server].list[i] <= now_pacific:
                     names.append(i)
             if names:
                 await self.rm(names, self.servers[server].id, self.servers[server].channelID, False)
@@ -57,15 +57,17 @@ class SeaOfWonders(commands.Cog):
         self.servers = await GlobalFunc.read("server_data")
         server = self.servers[str(server)]
         channel = await GlobalFunc.getChannelFromGuild(self.bot.guilds, server)
+        removeList = ""
         for i in list(server.list):
             if i in names:
+                removeList += "{} ".format(i)
                 del server.list[i]
-                if not manual:
-                    await channel.send("**{}**, {}".format(i, await GlobalFunc.getRandomDialogue("fishing")))
-                else:
-                    await channel.send("Removed **{}** from cooldown list.".format(i))
-        self.checkCooldowns.restart()
+        if not manual:
+            await channel.send("**{}**, {}".format(removeList, await GlobalFunc.getRandomDialogue("fishing")))
+        else:
+            await channel.send("Removed **{}** from cooldown list.".format(removeList))
         await GlobalFunc.write(self.servers, "server_data")
+        # self.checkCooldowns.restart()
 
     @commands.command(brief="Use to remove players from list", description="This command essentially does the opposite of `!cd`. You can leave out the timestamp, just have to say who you want to remove.\n!remove Person1 Person2 Person3 ... ...")
     async def remove(self, ctx, *args):
