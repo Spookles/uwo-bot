@@ -14,8 +14,8 @@
         "11": "It was the least I could do.",
         "12": "Glad to help.",
         "13": "You can thank me by feeding me players!",
-	"14": "Please bring me some tasty sailors as payment.",
-	"15": "You're welcome! I miss hugging y'all though."
+        "14": "Please bring me some tasty sailors as payment.",
+        "15": "You're welcome! I miss hugging y'all though."
     },
     "fishing": {
         "0": "I'm pleased to announce, you can go back to _trying_ to kill me.",
@@ -24,25 +24,27 @@
         "3": "you know the definition of insanity? Oh well, you can try again if you'd like.",
         "4": "you're welcome back into my lair.",
         "5": "🔔🔔🔔 IT IS TIME.",
-        "6": "grab your friends and try me, _bitch_.",
-        "7": "have fun in the Sea of Wonders.",
-        "8": "will I turn into 🍣 this time?",
-        "0": "good thing my species have a great fertility rate.",
-        "10": "🎣 you know what that means.",
-        "11": "zzz.. **pop** huh what. Oh. I cleaned up, you can come now.",
-        "12": "I'm hungry, feed me.",
-        "13": "been a while since I've seen you, how about you come visit again?",
-        "14": "I promise I will show up!",
-	"15": "please come back, I'm sailor-hungry!",
-	"16": "it's time for huggies.",
-	"17": "It's nom nom time!",
-	"18": "I'm in the mood for some Italian today, so please bring along Venetian crewmembers this time.",
-	"19": "stop hiring Spanish sailors already, they're too spicy!",
-	"20": "do you happen to know what wine goes well with your crew?",
-	"21": "good news! I've been lobbying KOEI to reduce my encounter rate, and I think they may do it.",
-	"22": "be warned, I'm just addicted to hugs!",
-	"23": "you know, before you voyagers began attacking me, I used to have a social life.",
-	"24": "why do I always have to have the humorous catch phrases? Why can't YOU say something once in a while?"
+        "6": "have fun in the Sea of Wonders.",
+        "7": "will I turn into 🍣 this time?",
+        "8": "good thing my species have a great fertility rate.",
+        "9": "🎣 you know what that means.",
+        "10": "zzz.. **pop** huh what. Oh. I cleaned up, you can come now.",
+        "11": "I'm hungry, feed me.",
+        "12": "been a while since I've seen you, how about you come visit again?",
+        "13": "I promise I will show up!",
+        "14": "please come back, I'm sailor-hungry!",
+        "15": "it's time for huggies.",
+        "16": "It's nom nom time!",
+        "17": "I'm in the mood for some Italian today, so please bring along Venetian crewmembers this time.",
+        "18": "stop hiring Spanish sailors already, they're too spicy!",
+        "19": "do you happen to know what wine goes well with your crew?",
+        "20": "good news! I've been lobbying KOEI to reduce my encounter rate, and I think they may do it.",
+        "21": "be warned, I'm just addicted to hugs!",
+        "22": "you know, before you voyagers began attacking me, I used to have a social life.",
+        "23": "why do I always have to have the humorous catch phrases? Why can't YOU say something once in a while?",
+        "24": "speedrun tip for your next run, remove all your plates, guns and sails, then equip a ram and collide with me.",
+        "25": "♪dumb ways to die, so many dumb ways to die♫",
+        "26": "come back to me! This time I will definitely give you the things you want! _well maybe, it's not guaranteed_"
     },
     "tail": {
         "0": "get whacked.",
@@ -56,7 +58,7 @@
         "8": "oh. Him again.. **whack**.",
         "9": "may bad nanban rates be upon thy.",
         "10": "guess who's not getting any rewards next time.",
-	"11": "here, have a random -1200 fire tick for ya!",
-	"12": "_sings_ Got a whale of a tail to smack you with"
+        "11": "here, have a random -1200 fire tick for ya!",
+        "12": "♪Got a whale of a tail to smack you with♫"
     }
 }

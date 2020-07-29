@@ -14,7 +14,7 @@ from unchartedwatersonline import UnchartedWatersOnline
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='$')
 servers = {}
 dialogue = {}
 
@@ -69,5 +69,9 @@ async def time(ctx):
     now_utc = datetime.datetime.now(timezone('UTC'))
     now_pacific = now_utc.astimezone(timezone('US/Pacific'))
     await ctx.send("It is currently **{}** for the server.".format(now_pacific.strftime('%Y-%m-%d %H:%M:%S'))) 
+
+@bot.command(brief="", description="")
+async def debug(ctx):
+    await ctx.send("```json\n {}``` You can give it a readable format at: https://jsonformatter.curiousconcept.com/. Make sure to have dev mode turned on in Discord to be able to copy IDs. This server ID is: **{}**.".format(await GlobalFunc.raw("server_data"), ctx.guild.id))
 
 bot.run(TOKEN)
