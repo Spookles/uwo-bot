@@ -123,7 +123,7 @@ class SeaOfWonders(commands.Cog):
         embed.set_author(name="How To Use Huggles")
 
         embed.add_field(name="The Basic Commands", value="And how to use them")
-        embed.add_field(name="!cd", value="!cd HHMM Name Name ... \nTime can be set as 1234 or 12:34. Important is that it's always 4 digits! So 6:34 would be 06:34.\nNames **must** always be seperated by spaces.\n\nQuick use: **!cd HHMM**\nThis will only add yourself.", inline=False)
+        embed.add_field(name="!cd", value="**!cd HHMM Name Name ...** \nTime can be set as 1234 or 12:34. Important is that it's always 4 digits! So 6:34 would be 06:34.\nNames **must** always be seperated by spaces.\n\nQuick use: **!cd HHMM**\nThis will only add yourself.", inline=False)
         embed.add_field(name="!list", value="List shows all the cooldowns of people that are registered. And when they run out.", inline=False)
         embed.add_field(name="!remove", value="You can remove yourself or others by doing **!remove Name Name ...**\nAgain names **must** be seperated by spaces.\nYou will automatically be removed from **!list** when your cooldown is over. You will also be notified when that happens.\n\nQuick use: **!remove**\nThis will only remove yourself.", inline=False)
 

@@ -14,7 +14,7 @@ from unchartedwatersonline import UnchartedWatersOnline
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(command_prefix='!')
 servers = {}
 dialogue = {}
 
