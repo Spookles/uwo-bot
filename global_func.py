@@ -27,6 +27,14 @@ class GlobalFunc():
         return obj
 
     @staticmethod
+    async def raw(filename):
+        """Gets the raw server data for debugging purposes"""
+        filename+=".json"
+        f = open(filename, 'r')
+        json_str = f.read()
+        return json_str
+
+    @staticmethod
     async def getChannel(channels, id):
         """Get a specific channel from a list of channels by ID."""
         for channel in channels:
