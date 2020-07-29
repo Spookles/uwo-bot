@@ -27,11 +27,14 @@ class SeaOfWonders(commands.Cog):
             if ':' not in time:
                 time = time[ : 2] + ":" + time[2 : ]
             if not args:
-                server.list[ctx.author.mention] = time
+                name = ctx.author.mention
+                name = name.replace("!", "")
+                server.list[name] = time
                 await channel.send("**{}** your cooldown is set for **{}** and that it is in **{}**".format(ctx.author.mention, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
             else:
                 names = ""
                 for i in args:
+                    i = i.replace("!", "")
                     server.list[i] = time
                     names+=i+", "
                 names = names[:-2]
@@ -60,6 +63,7 @@ class SeaOfWonders(commands.Cog):
         removeList = ""
         for i in list(server.list):
             if i in names:
+                i = i.replace("!", "")
                 removeList += "{} ".format(i)
                 del server.list[i]
         removeList = removeList[:-1]
@@ -76,6 +80,7 @@ class SeaOfWonders(commands.Cog):
         if not args:
             names.append(ctx.author.mention)
         else:
+            args.replace("!", "")
             names = args
         await self.rm(names, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True)
 
