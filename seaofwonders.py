@@ -77,12 +77,14 @@ class SeaOfWonders(commands.Cog):
     async def remove(self, ctx, *args):
         self.servers = await GlobalFunc.read("server_data")
         names = []
+        newNames = []
         if not args:
-            names.append(ctx.author.mention)
+            newNames.append(ctx.author.mention.replace("!", ""))
         else:
-            args.replace("!", "")
             names = args
-        await self.rm(names, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True)
+        for n in names:
+            newNames.append(n.replace("!", ""))
+        await self.rm(newNames, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True)
 
     @commands.command(brief="Lists all players that have set their cooldowns", description="Shows an embed that tells you the cooldowns of everyone that is known.\nIt also shows the amount of time left till CD is finished.\nThis is all in server time, aka PDT.")
     async def list(self, ctx):
