@@ -61,11 +61,14 @@ class SeaOfWonders(commands.Cog):
         server = self.servers[str(server)]
         channel = await GlobalFunc.getChannelFromGuild(self.bot.guilds, server)
         removeList = ""
-
+        guild = self.bot.get_guild(int(server.id))
         count = 1
         for i in list(server.list):
             if int(index) != 0 and count == int(index):
-                removeList += "{} ".format(i)
+                i2 = i.replace("<@", "")
+                i2 = i2.replace(">", "")
+                member = guild.get_member(int(i2))
+                removeList += "{} ".format(member.display_name)
                 del server.list[i]
             if i in names:
                 i = i.replace("!", "")

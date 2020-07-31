@@ -67,3 +67,7 @@ class GlobalFunc():
         hour = diff.seconds//3600
         eta = f"{hour:02}:{minute:02}"+"\n"
         return eta
+
+    @staticmethod
+    async def getDisplayName(bot, mention):
+        return ""
