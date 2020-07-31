@@ -54,18 +54,24 @@ class SeaOfWonders(commands.Cog):
                 if self.servers[server].list[i] == now_pacific:
                     names.append(i)
             if names:
-                await self.rm(names, self.servers[server].id, self.servers[server].channelID, False)
+                await self.rm(names, None, self.servers[server].id, self.servers[server].channelID, False)
 
-    async def rm(self, names, server, channel, manual):
+    async def rm(self, names, index, server, channel, manual):
         self.servers = await GlobalFunc.read("server_data")
         server = self.servers[str(server)]
         channel = await GlobalFunc.getChannelFromGuild(self.bot.guilds, server)
         removeList = ""
+
+        count = 1
         for i in list(server.list):
+            if int(index) != 0 and count == int(index):
+                removeList += "{} ".format(i)
+                del server.list[i]
             if i in names:
                 i = i.replace("!", "")
                 removeList += "{} ".format(i)
                 del server.list[i]
+            count+=1
         removeList = removeList[:-1]
         if (not manual) and removeList:
             await channel.send("**{}**, {}".format(removeList, await GlobalFunc.getRandomDialogue("fishing")))
@@ -78,27 +84,36 @@ class SeaOfWonders(commands.Cog):
         self.servers = await GlobalFunc.read("server_data")
         names = []
         newNames = []
+        rmIndex = "0"
         if not args:
             newNames.append(ctx.author.mention.replace("!", ""))
+        elif re.match("^([0-9]|[0-9][0-9])$", str(args[0])):
+            rmIndex = str(args[0])
         else:
             names = args
         for n in names:
             newNames.append(n.replace("!", ""))
-        await self.rm(newNames, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True)
+        await self.rm(newNames, rmIndex, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True)
 
     @commands.command(brief="Lists all players that have set their cooldowns", description="Shows an embed that tells you the cooldowns of everyone that is known.\nIt also shows the amount of time left till CD is finished.\nThis is all in server time, aka PDT.")
     async def list(self, ctx):
         self.servers = await GlobalFunc.read("server_data")
         server = self.servers[str(ctx.guild.id)]
+        index = ""
         names = ""
         cd = ""
         eta = ""
 
+        count = 1
         for i in server.list:
+            index+="{}\n".format(count)
             names+=i+"\n"
             cd+=server.list[i]+"\n"
             eta += await GlobalFunc.calculateETA(datetime.datetime.strptime(server.list[i], '%H:%M'))
+            count+=1
 
+        if not index:
+            index = "0"
         if not names:
             names = "none"
         if not cd:
@@ -106,7 +121,12 @@ class SeaOfWonders(commands.Cog):
         if not eta:
             eta = "none"
 
-        embed=discord.Embed(title="Cooldown(s)", description="Everyone their known cooldown(s) in PDT server time", color=0x00d9ff)
+        now_utc = datetime.datetime.now(timezone('UTC'))
+        now_pacific = now_utc.astimezone(timezone('US/Pacific'))  
+
+        embed=discord.Embed(title="Cooldown(s)", description="", color=0x252525)
+        embed.set_footer(text="{} PDT day ends in {}".format(now_pacific.strftime('%Y-%m-%d %H:%M'), await GlobalFunc.calculateETA(datetime.datetime.strptime("00:00", '%H:%M'))))
+        embed.add_field(name="Index", value="{}".format(index), inline=True)
         embed.add_field(name="Name", value="{}".format(names), inline=True)
         embed.add_field(name="CD", value="{}".format(cd), inline=True)
         embed.add_field(name="Time Left", value="{}".format(eta), inline=True)
@@ -128,7 +148,6 @@ class SeaOfWonders(commands.Cog):
         embed = discord.Embed(colour=discord.Colour(0xff0000))
 
         embed.set_author(name="How To Use Huggles")
-
         embed.add_field(name="The Basic Commands", value="And how to use them")
         embed.add_field(name="!cd", value="**!cd HHMM Name Name ...** \nTime can be set as 1234 or 12:34. Important is that it's always 4 digits! So 6:34 would be 06:34.\nNames **must** always be seperated by spaces.\n\nQuick use: **!cd HHMM**\nThis will only add yourself.", inline=False)
         embed.add_field(name="!list", value="List shows all the cooldowns of people that are registered. And when they run out.", inline=False)
