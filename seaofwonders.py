@@ -118,8 +118,7 @@ class SeaOfWonders(commands.Cog):
 
         count = 1
         for i in server.list:
-            index+="{}\n".format(count)
-            names+=i+"\n"
+            names+="{}: {}\n".format(count, i)
             cd+=server.list[i]+"\n"
             eta += await GlobalFunc.calculateETA(datetime.datetime.strptime(server.list[i], '%H:%M'))
             count+=1
@@ -138,8 +137,7 @@ class SeaOfWonders(commands.Cog):
 
         embed=discord.Embed(title="Cooldown(s)", description="", color=0x252525)
         embed.set_footer(text="{} PDT day ends in {}".format(now_pacific.strftime('%Y-%m-%d %H:%M'), await GlobalFunc.calculateETA(datetime.datetime.strptime("00:00", '%H:%M'))))
-        embed.add_field(name="Index", value="{}".format(index), inline=True)
-        embed.add_field(name="Name", value="{}".format(names), inline=True)
+        embed.add_field(name="Index: Name", value="{}".format(names), inline=True)
         embed.add_field(name="CD", value="{}".format(cd), inline=True)
         embed.add_field(name="Time Left", value="{}".format(eta), inline=True)
         await ctx.send(embed=embed)
