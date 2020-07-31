@@ -69,5 +69,8 @@ class GlobalFunc():
         return eta
 
     @staticmethod
-    async def getDisplayName(bot, mention):
-        return ""
+    async def getDisplayName(guild, mention):
+        name = mention.replace("<@", "")
+        name = name.replace(">", "")
+        member = guild.get_member(int(name))
+        return member.display_name
