@@ -47,7 +47,7 @@ class SeaOfWonders(commands.Cog):
             await ctx.send("I'm afraid something went wrong. Use `!help cd` to see how to use the command.")
         await GlobalFunc.write(self.servers, "server_data")
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=30)
     async def checkCooldowns(self):
         now_utc = datetime.datetime.now(timezone('UTC'))
         now_pacific = now_utc.astimezone(timezone('US/Pacific')).strftime('%H:%M')
@@ -65,6 +65,7 @@ class SeaOfWonders(commands.Cog):
         server = self.servers[str(server)]
         channel = await GlobalFunc.getChannelFromGuild(self.bot.guilds, server)
         removeList = ""
+        addList = ""
         guild = self.bot.get_guild(int(server.id))
         count = 1
         for i in list(server.list):
@@ -79,6 +80,7 @@ class SeaOfWonders(commands.Cog):
                 if "@" in i:
                     i = i.replace("!", "")
                     removeList += "{} ".format(await GlobalFunc.getDisplayName(guild, i))
+                    addList += "{} ".format(i)
                     del server.list[i]
                 else:
                     removeList += "{} ".format(i)
@@ -88,7 +90,7 @@ class SeaOfWonders(commands.Cog):
         if (not manual) and removeList:
             await channel.send("**{}**, {}".format(removeList, await GlobalFunc.getRandomDialogue("fishing")))
         elif removeList:
-            await channel.send("Removed **{}** from cooldown list.".format(removeList))
+            await channel.send("Removed **{}** from cooldown list.".format(addList))
         await GlobalFunc.write(self.servers, "server_data")
 
     @commands.command(brief="Use to remove players from list", description="This command essentially does the opposite of `!cd`. You can leave out the timestamp, just have to say who you want to remove.\n!remove Person1 Person2 Person3 ... ...")
