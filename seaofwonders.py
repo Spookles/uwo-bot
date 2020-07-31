@@ -30,13 +30,17 @@ class SeaOfWonders(commands.Cog):
                 name = ctx.author.mention
                 name = name.replace("!", "")
                 server.list[name] = time
-                await channel.send("**{}** your cooldown is set for **{}** and that it is in **{}**".format(ctx.author.mention, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
+                await channel.send("**{}** your cooldown is set for **{}** and that it is in **{}**".format(ctx.author.display_name, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
             else:
                 names = ""
                 for i in args:
-                    i = i.replace("!", "")
-                    server.list[i] = time
-                    names+=i+", "
+                    if "@" in i:
+                        i = i.replace("!", "")
+                        server.list[i] = time
+                        names+="{}, ".format(await GlobalFunc.getDisplayName(ctx.guild, i))
+                    else:
+                        server.list[i] = time
+                        names+="{}, ".format(i)
                 names = names[:-2]
                 await channel.send("Cooldown set for **{}** at **{}** and that it is in **{}**".format(names, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
         else:
@@ -65,15 +69,20 @@ class SeaOfWonders(commands.Cog):
         count = 1
         for i in list(server.list):
             if int(index) != 0 and count == int(index):
-                i2 = i.replace("<@", "")
-                i2 = i2.replace(">", "")
-                member = guild.get_member(int(i2))
-                removeList += "{} ".format(member.display_name)
-                del server.list[i]
+                if "@" in i:
+                    removeList += "{} ".format(await GlobalFunc.getDisplayName(guild, i))
+                    del server.list[i]
+                else:
+                    removeList += "{} ".format(i)
+                    del server.list[i]
             if i in names:
-                i = i.replace("!", "")
-                removeList += "{} ".format(i)
-                del server.list[i]
+                if "@" in i:
+                    i = i.replace("!", "")
+                    removeList += "{} ".format(await GlobalFunc.getDisplayName(guild, i))
+                    del server.list[i]
+                else:
+                    removeList += "{} ".format(i)
+                    del server.list[i]
             count+=1
         removeList = removeList[:-1]
         if (not manual) and removeList:
