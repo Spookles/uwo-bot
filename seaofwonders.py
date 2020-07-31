@@ -54,7 +54,7 @@ class SeaOfWonders(commands.Cog):
                 if self.servers[server].list[i] == now_pacific:
                     names.append(i)
             if names:
-                await self.rm(names, None, self.servers[server].id, self.servers[server].channelID, False)
+                await self.rm(names, "0", self.servers[server].id, self.servers[server].channelID, False)
 
     async def rm(self, names, index, server, channel, manual):
         self.servers = await GlobalFunc.read("server_data")
