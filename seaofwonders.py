@@ -84,13 +84,14 @@ class SeaOfWonders(commands.Cog):
                     del server.list[i]
                 else:
                     removeList += "{} ".format(i)
+                    addList += "{} ".format(i)
                     del server.list[i]
             count+=1
         removeList = removeList[:-1]
         if (not manual) and removeList:
-            await channel.send("**{}**, {}".format(removeList, await GlobalFunc.getRandomDialogue("fishing")))
+            await channel.send("**{}**, {}".format(addList, await GlobalFunc.getRandomDialogue("fishing")))
         elif removeList:
-            await channel.send("Removed **{}** from cooldown list.".format(addList))
+            await channel.send("Removed **{}** from cooldown list.".format(removeList))
         await GlobalFunc.write(self.servers, "server_data")
 
     @commands.command(brief="Use to remove players from list", description="This command essentially does the opposite of `!cd`. You can leave out the timestamp, just have to say who you want to remove.\n!remove Person1 Person2 Person3 ... ...")
