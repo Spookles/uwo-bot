@@ -51,6 +51,8 @@ class SeaOfWonders(commands.Cog):
     async def checkCooldowns(self):
         now_utc = datetime.datetime.now(timezone('UTC'))
         now_pacific = now_utc.astimezone(timezone('US/Pacific')).strftime('%H:%M')
+        stream = discord.Streaming(name=now_utc.astimezone(timezone('US/Pacific')).strftime('%Y-%m-%d %H:%M'), url="https://www.twitch.tv/dspookles")
+        await self.bot.change_presence(activity=stream)
         print(now_pacific)
         for server in self.servers:
             names = []
