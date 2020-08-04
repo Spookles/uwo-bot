@@ -74,4 +74,12 @@ async def time(ctx):
 async def debug(ctx):
     await ctx.send("```json\n {}``` You can give it a readable format at: https://jsonformatter.curiousconcept.com/. Make sure to have dev mode turned on in Discord to be able to copy IDs. This server ID is: **{}**.".format(await GlobalFunc.raw("server_data"), ctx.guild.id))
 
+@bot.command(brief="", description="")
+async def coin(ctx):
+    r = random.randint(0, 1)
+    if r == 1:
+        await ctx.send("Heads!")
+    else:
+        await ctx.send("Tails!")
+
 bot.run(TOKEN)
