@@ -30,7 +30,7 @@ class SeaOfWonders(commands.Cog):
                 name = ctx.author.mention
                 name = name.replace("!", "")
                 server.list[name] = time
-                await channel.send("**{}** your cooldown is set for **{}** and that it is in **{}**".format(ctx.author.display_name, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
+                await channel.send("**{}** your cooldown is set for **{}** and that is in **{}**".format(ctx.author.display_name, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
             else:
                 names = ""
                 for i in args:
