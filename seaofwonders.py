@@ -24,25 +24,30 @@ class SeaOfWonders(commands.Cog):
         server = self.servers[str(ctx.guild.id)]
         channel = await GlobalFunc.getChannel(ctx.guild.channels, server.channelID)
         if re.match("^([0][0-9]|[1][0-9]|[2][0-3]):?([0-5][0-9])$", time) is not None:
-            if ':' not in time:
-                time = time[ : 2] + ":" + time[2 : ]
-            if not args:
-                name = ctx.author.mention
-                name = name.replace("!", "")
-                server.list[name] = time
-                await channel.send("**{}** your cooldown is set for **{}** and that is in **{}**".format(ctx.author.display_name, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
-            else:
-                names = ""
-                for i in args:
-                    if "@" in i:
-                        i = i.replace("!", "")
-                        server.list[i] = time
-                        names+="{}, ".format(await GlobalFunc.getDisplayName(ctx.guild, i))
-                    else:
-                        server.list[i] = time
-                        names+="{}, ".format(i)
-                names = names[:-2]
-                await channel.send("Cooldown set for **{}** at **{}** and that it is in **{}**".format(names, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
+            try:
+                if ':' not in time:
+                    time = time[ : 2] + ":" + time[2 : ]
+                if not args:
+                    name = ctx.author.mention
+                    name = name.replace("!", "")
+                    server.list[name] = time
+                    await ctx.message.add_reaction("✅")
+                    # await channel.send("**{}** your cooldown is set for **{}** and that is in **{}**".format(ctx.author.display_name, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
+                else:
+                    names = ""
+                    for i in args:
+                        if "@" in i and "<" in i:
+                            i = i.replace("!", "")
+                            server.list[i] = time
+                            names+="{}, ".format(await GlobalFunc.getDisplayName(ctx.guild, i))
+                        else:
+                            server.list[i] = time
+                            names+="{}, ".format(i)
+                    names = names[:-2]
+                    await ctx.message.add_reaction("✅")
+                    # await channel.send("Cooldown set for **{}** at **{}** and that it is in **{}**".format(names, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
+            except:
+                await ctx.message.add_reaction("⛔")
         else:
             await ctx.send("I'm afraid something went wrong. Use `!help cd` to see how to use the command.")
         await GlobalFunc.write(self.servers, "server_data")
@@ -60,9 +65,9 @@ class SeaOfWonders(commands.Cog):
                 if self.servers[server].list[i] == now_pacific:
                     names.append(i)
             if names:
-                await self.rm(names, "0", self.servers[server].id, self.servers[server].channelID, False)
+                await self.rm(names, "0", self.servers[server].id, self.servers[server].channelID, False, None)
 
-    async def rm(self, names, index, server, channel, manual):
+    async def rm(self, names, index, server, channel, manual, ctx):
         self.servers = await GlobalFunc.read("server_data")
         server = self.servers[str(server)]
         channel = await GlobalFunc.getChannelFromGuild(self.bot.guilds, server)
@@ -71,29 +76,35 @@ class SeaOfWonders(commands.Cog):
         guild = self.bot.get_guild(int(server.id))
         count = 1
         for i in list(server.list):
-            if int(index) != 0 and count == int(index):
-                if "@" in i:
-                    removeList += "{} ".format(await GlobalFunc.getDisplayName(guild, i))
-                    del server.list[i]
-                else:
-                    removeList += "{} ".format(i)
-                    del server.list[i]
-            if i in names:
-                if "@" in i:
-                    i = i.replace("!", "")
-                    removeList += "{} ".format(await GlobalFunc.getDisplayName(guild, i))
-                    addList += "{} ".format(i)
-                    del server.list[i]
-                else:
-                    removeList += "{} ".format(i)
-                    addList += "{} ".format(i)
-                    del server.list[i]
+            try:
+                if int(index) != 0 and count == int(index):
+                    if "@" in i and "<" in i:
+                        removeList += "{} ".format(await GlobalFunc.getDisplayName(guild, i))
+                        del server.list[i]
+                    else:
+                        removeList += "{} ".format(i)
+                        del server.list[i]
+                if i in names:
+                    if "@" in i and "<" in i:
+                        i = i.replace("!", "")
+                        removeList += "{} ".format(await GlobalFunc.getDisplayName(guild, i))
+                        addList += "{} ".format(i)
+                        del server.list[i]
+                    else:
+                        removeList += "{} ".format(i)
+                        addList += "{} ".format(i)
+                        del server.list[i]
+            except:
+                if ctx:
+                    await ctx.message.add_reaction("⛔")
             count+=1
         removeList = removeList[:-1]
+        addList = addList[:-1]
         if (not manual) and removeList:
             await channel.send("**{}**, {}".format(addList, await GlobalFunc.getRandomDialogue("fishing")))
         elif removeList:
-            await channel.send("Removed **{}** from cooldown list.".format(removeList))
+            await ctx.message.add_reaction("✅")
+            # await channel.send("Removed **{}** from cooldown list.".format(removeList))
         await GlobalFunc.write(self.servers, "server_data")
 
     @commands.command(brief="Use to remove players from list", description="This command essentially does the opposite of `!cd`. You can leave out the timestamp, just have to say who you want to remove.\n!remove Person1 Person2 Person3 ... ...")
@@ -110,7 +121,7 @@ class SeaOfWonders(commands.Cog):
             names = args
         for n in names:
             newNames.append(n.replace("!", ""))
-        await self.rm(newNames, rmIndex, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True)
+        await self.rm(newNames, rmIndex, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True, ctx)
 
     @commands.command(brief="Lists all players that have set their cooldowns", description="Shows an embed that tells you the cooldowns of everyone that is known.\nIt also shows the amount of time left till CD is finished.\nThis is all in server time, aka PDT.")
     async def list(self, ctx):
