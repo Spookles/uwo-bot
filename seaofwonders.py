@@ -54,18 +54,20 @@ class SeaOfWonders(commands.Cog):
 
     @tasks.loop(seconds=30)
     async def checkCooldowns(self):
-        now_utc = datetime.datetime.now(timezone('UTC'))
-        now_pacific = now_utc.astimezone(timezone('US/Pacific')).strftime('%H:%M')
-        stream = discord.Streaming(name=now_utc.astimezone(timezone('US/Pacific')).strftime('%Y-%m-%d %H:%M'), url="https://www.twitch.tv/dspookles")
-        await self.bot.change_presence(activity=stream)
-        print(now_pacific)
-        for server in self.servers:
-            names = []
-            for i in self.servers[server].list:
-                if self.servers[server].list[i] == now_pacific:
-                    names.append(i)
-            if names:
-                await self.rm(names, "0", self.servers[server].id, self.servers[server].channelID, False, None)
+        try:
+            now_utc = datetime.datetime.now(timezone('UTC'))
+            now_pacific = now_utc.astimezone(timezone('US/Pacific')).strftime('%H:%M')
+            stream = discord.Streaming(name=now_utc.astimezone(timezone('US/Pacific')).strftime('%Y-%m-%d %H:%M'), url="https://www.twitch.tv/dspookles")
+            await self.bot.change_presence(activity=stream)
+            print(now_pacific)
+            for server in self.servers:
+                names = []
+                for i in self.servers[server].list:
+                    if self.servers[server].list[i] == now_pacific:
+                        names.append(i)
+                if names:
+                    await self.rm(names, "0", self.servers[server].id, self.servers[server].channelID, False, None)
+        except Exception as e: print(e)
 
     async def rm(self, names, index, server, channel, manual, ctx):
         self.servers = await GlobalFunc.read("server_data")
