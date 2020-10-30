@@ -68,9 +68,10 @@ class GlobalFunc():
         eta = f"{hour:02}:{minute:02}"+"\n"
         return eta
 
-    @staticmethod
-    async def getDisplayName(guild, mention):
-        name = mention.replace("<@", "")
-        name = name.replace(">", "")
-        member = guild.get_member(int(name))
-        return member.display_name
+    #***Obsolete code, keeping it in for any possible future references***#
+    # @staticmethod
+    # async def getDisplayName(guild, mention):
+    #     name = mention.replace("<@", "")
+    #     name = name.replace(">", "")
+    #     member = guild.get_member(int(name))   
+    #     return member.display_name

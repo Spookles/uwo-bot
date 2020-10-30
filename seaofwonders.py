@@ -32,21 +32,21 @@ class SeaOfWonders(commands.Cog):
                     name = name.replace("!", "")
                     server.list[name] = time
                     await ctx.message.add_reaction("✅")
-                    # await channel.send("**{}** your cooldown is set for **{}** and that is in **{}**".format(ctx.author.display_name, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
                 else:
                     names = ""
                     for i in args:
                         if "@" in i and "<" in i:
                             i = i.replace("!", "")
                             server.list[i] = time
-                            names+="{}, ".format(await GlobalFunc.getDisplayName(ctx.guild, i))
+                            names+="{}, ".format(str(i))
                         else:
                             server.list[i] = time
                             names+="{}, ".format(i)
                     names = names[:-2]
                     await ctx.message.add_reaction("✅")
-                    # await channel.send("Cooldown set for **{}** at **{}** and that it is in **{}**".format(names, time, await GlobalFunc.calculateETA(datetime.datetime.strptime(time, '%H:%M'))))
-            except:
+            except Exception as e:
+                print(e)
+                await channel.send("<@154332161737097217> Error: {}", e)
                 await ctx.message.add_reaction("⛔")
         else:
             await ctx.send("I'm afraid something went wrong. Use `!help cd` to see how to use the command.")
@@ -81,7 +81,7 @@ class SeaOfWonders(commands.Cog):
             try:
                 if int(index) != 0 and count == int(index):
                     if "@" in i and "<" in i:
-                        removeList += "{} ".format(await GlobalFunc.getDisplayName(guild, i))
+                        removeList += "{} ".format(str(i))
                         del server.list[i]
                     else:
                         removeList += "{} ".format(i)
@@ -89,15 +89,17 @@ class SeaOfWonders(commands.Cog):
                 if i in names:
                     if "@" in i and "<" in i:
                         i = i.replace("!", "")
-                        removeList += "{} ".format(await GlobalFunc.getDisplayName(guild, i))
+                        removeList += "{} ".format(str(i))
                         addList += "{} ".format(i)
                         del server.list[i]
                     else:
                         removeList += "{} ".format(i)
                         addList += "{} ".format(i)
                         del server.list[i]
-            except:
+            except Exception as e:
                 if ctx:
+                    print(e)
+                    await channel.send("<@154332161737097217> Error: {}", e)
                     await ctx.message.add_reaction("⛔")
             count+=1
         removeList = removeList[:-1]
@@ -106,7 +108,6 @@ class SeaOfWonders(commands.Cog):
             await channel.send("**{}**, {}".format(addList, await GlobalFunc.getRandomDialogue("fishing")))
         elif removeList:
             await ctx.message.add_reaction("✅")
-            # await channel.send("Removed **{}** from cooldown list.".format(removeList))
         await GlobalFunc.write(self.servers, "server_data")
 
     @commands.command(brief="Use to remove players from list", description="This command essentially does the opposite of `!cd`. You can leave out the timestamp, just have to say who you want to remove.\n!remove Person1 Person2 Person3 ... ...")
