@@ -4,6 +4,8 @@ Huggles is a Discord bot for Uncharted Waters Online. The goal of Huggles is to 
 
 ## Getting Started
 
+#### Huggles has been developed under WSL Debian and tested with WSL Debian.
+
 ### Prerequisites
 Some things you need to install in order for Huggles to work
 
