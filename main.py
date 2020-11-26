@@ -7,6 +7,7 @@ import random
 import json
 from pytz import timezone
 from server import Server
+from user import User
 from global_func import GlobalFunc
 from seaofwonders import SeaOfWonders
 from unchartedwatersonline import UnchartedWatersOnline
@@ -14,7 +15,7 @@ from unchartedwatersonline import UnchartedWatersOnline
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='#')
 servers = {}
 dialogue = {}
 
@@ -25,6 +26,7 @@ async def on_ready():
         print(f'{guild.name}(id: {guild.id})')
         mainChannel = {}
         list = {}
+        users = {}
         for channel in guild.channels:
             if channel.name == "general":
                 mainChannel = channel
@@ -32,7 +34,7 @@ async def on_ready():
         if not mainChannel:
             print("Could not find a general channel for server: {}".format(guild.name))
 
-        server = Server(str(guild.id), mainChannel.id, list)
+        server = Server(str(guild.id), mainChannel.id, list, users)
         servers[guild.id] = server
     if not os.path.exists("server_data.json"):
         await GlobalFunc.write(servers, "server_data")
@@ -81,5 +83,17 @@ async def coin(ctx):
         await ctx.send("Heads!")
     else:
         await ctx.send("Tails!")
+
+@bot.command(brief="", description="")
+async def roll(ctx, arg):
+    if int(arg) <= 99999:
+        try:
+            r = random.randint(0, int(arg))
+            if r == 69:
+                await ctx.send(str(r)+' nice')
+            else:
+                await ctx.send(str(r))
+        except (ValueError, UnboundLocalError):
+            await tail(ctx, ctx.author.display_name)
 
 bot.run(TOKEN)

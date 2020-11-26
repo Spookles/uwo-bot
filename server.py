@@ -2,7 +2,8 @@ import discord
 from discord.ext import tasks, commands
 
 class Server(object):
-    def __init__(self, id, channel, list):
+    def __init__(self, id, channel, list, users):
+        self.users = users
         self.id = id
         self.channelID = channel
         self.list = list

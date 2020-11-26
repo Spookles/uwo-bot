@@ -8,6 +8,7 @@ import json
 from pytz import timezone
 from discord.ext import tasks, commands
 from global_func import GlobalFunc
+from user import User, addUser, removeCharacters
 
 class SeaOfWonders(commands.Cog):
     """Sea of Wonders section of the bot."""
@@ -28,9 +29,15 @@ class SeaOfWonders(commands.Cog):
                 if ':' not in time:
                     time = time[ : 2] + ":" + time[2 : ]
                 if not args:
+                    i = removeCharacters(str(ctx.author.id))
                     name = ctx.author.mention
                     name = name.replace("!", "")
                     server.list[name] = time
+                    if i not in server.users:
+                        server = addUser(server, i)
+                        server.users[removeCharacters(i)].increment()
+                    else:
+                        server.users[removeCharacters(i)].increment()                    
                     await ctx.message.add_reaction("✅")
                 else:
                     names = ""
@@ -39,14 +46,19 @@ class SeaOfWonders(commands.Cog):
                             i = i.replace("!", "")
                             server.list[i] = time
                             names+="{}, ".format(str(i))
+                            if removeCharacters(i) not in server.users:
+                                server = addUser(server, i)
+                                server.users[removeCharacters(i)].increment()
+                            else:
+                                server.users[removeCharacters(i)].increment()
                         else:
-                            server.list[i] = time
+                            server.list[int(i)] = time
                             names+="{}, ".format(i)
                     names = names[:-2]
                     await ctx.message.add_reaction("✅")
             except Exception as e:
                 print(e)
-                await channel.send("<@154332161737097217> Error: {}", e)
+                await channel.send("<@154332161737097217> Error: {}".format(e))
                 await ctx.message.add_reaction("⛔")
         else:
             await ctx.send("I'm afraid something went wrong. Use `!help cd` to see how to use the command.")
@@ -99,7 +111,7 @@ class SeaOfWonders(commands.Cog):
             except Exception as e:
                 if ctx:
                     print(e)
-                    await channel.send("<@154332161737097217> Error: {}", e)
+                    await channel.send("<@154332161737097217> Error: {}".format(e))
                     await ctx.message.add_reaction("⛔")
             count+=1
         removeList = removeList[:-1]
@@ -181,5 +193,34 @@ class SeaOfWonders(commands.Cog):
         embed.add_field(name="!cd", value="**!cd HHMM Name Name ...** \nTime can be set as 1234 or 12:34. Important is that it's always 4 digits! So 6:34 would be 06:34.\nNames **must** always be seperated by spaces.\n\nQuick use: **!cd HHMM**\nThis will only add yourself.", inline=False)
         embed.add_field(name="!list", value="List shows all the cooldowns of people that are registered. And when they run out.", inline=False)
         embed.add_field(name="!remove", value="You can remove yourself or others by doing **!remove Name Name ...**\nAgain names **must** be seperated by spaces.\nYou will automatically be removed from **!list** when your cooldown is over. You will also be notified when that happens.\n\nQuick use: **!remove**\nThis will only remove yourself.", inline=False)
+
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="", description="")
+    async def profile(self, ctx, *args):
+        self.servers = await GlobalFunc.read("server_data")
+        r = random.randint(0, 0xffffff)
+
+        if not args:
+            try:
+                embed = discord.Embed(colour=discord.Colour(r))
+                embed.set_thumbnail(url=ctx.author.avatar_url)
+                embed.set_author(name=ctx.author.display_name)
+
+                embed.add_field(name="Sow Runs", value=self.servers[str(ctx.guild.id)].users[removeCharacters(str(ctx.author.id))].runs, inline=True)
+            except KeyError:
+                embed.add_field(name="Sow Runs", value='0', inline=True)
+
+        else:
+            member = await ctx.guild.fetch_member(int(removeCharacters(args[0])))
+            try:
+                self.servers = await GlobalFunc.read("server_data")
+                embed = discord.Embed(colour=discord.Colour(r))
+                embed.set_thumbnail(url=member.avatar_url)
+                embed.set_author(name=member.display_name)
+
+                embed.add_field(name="SoW Runs", value=self.servers[str(ctx.guild.id)].users[removeCharacters(str(args[0]))].runs, inline=True)
+            except KeyError:
+                embed.add_field(name="SoW Runs", value='0', inline=True) 
 
         await ctx.send(embed=embed)
