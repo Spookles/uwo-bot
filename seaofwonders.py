@@ -78,10 +78,19 @@ class SeaOfWonders(commands.Cog):
                     if self.servers[server].list[i] == now_pacific:
                         names.append(i)
                 if names:
-                    await self.rm(names, "0", self.servers[server].id, self.servers[server].channelID, False, None)
+                    christmas = 0
+                    #############
+                    #############
+                    ##CHRISTMAS##
+                    #############
+                    r = random.randint(0, 100)
+                    if r <= 5:
+                        christmas = 1
+                    await self.rm(names, "0", self.servers[server].id, self.servers[server].channelID, False, None, christmas)
+
         except Exception as e: print(e)
 
-    async def rm(self, names, index, server, channel, manual, ctx):
+    async def rm(self, names, index, server, channel, manual, ctx, christmas):
         self.servers = await GlobalFunc.read("server_data")
         server = self.servers[str(server)]
         channel = await GlobalFunc.getChannelFromGuild(self.bot.guilds, server)
@@ -118,6 +127,8 @@ class SeaOfWonders(commands.Cog):
         addList = addList[:-1]
         if (not manual) and removeList:
             await channel.send("**{}**, {}".format(addList, await GlobalFunc.getRandomDialogue("fishing")))
+            if christmas:
+                await channel.send("Congratulations, besides getting to play again <@154332161737097217> is giving you 2 free Special Ship Paints. Merry Christmas 🎅🎉🎁🔔🎄")
         elif removeList:
             await ctx.message.add_reaction("✅")
         await GlobalFunc.write(self.servers, "server_data")
