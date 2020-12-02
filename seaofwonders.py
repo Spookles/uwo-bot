@@ -52,7 +52,7 @@ class SeaOfWonders(commands.Cog):
                             else:
                                 server.users[removeCharacters(i)].increment()
                         else:
-                            server.list[int(i)] = time
+                            server.list[i] = time
                             names+="{}, ".format(i)
                     names = names[:-2]
                     await ctx.message.add_reaction("✅")
@@ -147,7 +147,7 @@ class SeaOfWonders(commands.Cog):
             names = args
         for n in names:
             newNames.append(n.replace("!", ""))
-        await self.rm(newNames, rmIndex, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True, ctx)
+        await self.rm(newNames, rmIndex, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True, ctx, 0)
 
     @commands.command(brief="Lists all players that have set their cooldowns", description="Shows an embed that tells you the cooldowns of everyone that is known.\nIt also shows the amount of time left till CD is finished.\nThis is all in server time, aka PDT.")
     async def list(self, ctx):
