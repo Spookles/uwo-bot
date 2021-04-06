@@ -5,6 +5,7 @@ import time
 import datetime
 import random
 import json
+import operator
 from pytz import timezone
 from discord.ext import tasks, commands
 from global_func import GlobalFunc
@@ -78,19 +79,11 @@ class SeaOfWonders(commands.Cog):
                     if self.servers[server].list[i] == now_pacific:
                         names.append(i)
                 if names:
-                    christmas = 0
-                    #############
-                    #############
-                    ##CHRISTMAS##
-                    #############
-                    r = random.randint(0, 100)
-                    if r <= 5:
-                        christmas = 1
-                    await self.rm(names, "0", self.servers[server].id, self.servers[server].channelID, False, None, christmas)
+                    await self.rm(names, "0", self.servers[server].id, self.servers[server].channelID, False, None)
 
         except Exception as e: print(e)
 
-    async def rm(self, names, index, server, channel, manual, ctx, christmas):
+    async def rm(self, names, index, server, channel, manual, ctx):
         self.servers = await GlobalFunc.read("server_data")
         server = self.servers[str(server)]
         channel = await GlobalFunc.getChannelFromGuild(self.bot.guilds, server)
@@ -127,8 +120,6 @@ class SeaOfWonders(commands.Cog):
         addList = addList[:-1]
         if (not manual) and removeList:
             await channel.send("**{}**, {}".format(addList, await GlobalFunc.getRandomDialogue("fishing")))
-            if christmas:
-                await channel.send("Congratulations, besides getting to play again <@154332161737097217> is giving you 2 free Special Ship Paints. Merry Christmas 🎅🎉🎁🔔🎄")
         elif removeList:
             await ctx.message.add_reaction("✅")
         await GlobalFunc.write(self.servers, "server_data")
@@ -233,5 +224,31 @@ class SeaOfWonders(commands.Cog):
                 embed.add_field(name="SoW Runs", value=self.servers[str(ctx.guild.id)].users[removeCharacters(str(args[0]))].runs, inline=True)
             except KeyError:
                 embed.add_field(name="SoW Runs", value='0', inline=True) 
-
         await ctx.send(embed=embed)
+
+    @commands.command(brief="", description="")
+    async def leaderboard(self, ctx):
+        self.servers = await GlobalFunc.read("server_data")
+        server = self.servers[str(ctx.guild.id)]
+        leaderboard = {}
+        index = 0
+        for user in (sorted(server.users.values(), key=operator.attrgetter('runs'), reverse=True)):
+            leaderboard[index] = user
+            index+=1
+            if index == 10:
+                break;
+        
+        names = ""
+        runs = ""
+        count = 1
+        for i in leaderboard:
+            names+="{}: <@{}>\n".format(count, leaderboard[i].id)
+            runs+="{}\n".format(leaderboard[i].runs)
+            count+=1
+
+        embed=discord.Embed(title="Sea of Wonders leaderboard", description="", color=0x252525)
+        embed.add_field(name="Index: Name", value="{}".format(names), inline=True)
+        embed.add_field(name="Runs", value="{}".format(runs), inline=True)
+        await ctx.send(embed=embed)
+
+        await GlobalFunc.write(self.servers, "server_data")
