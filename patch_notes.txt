@@ -1,3 +1,12 @@
+18-may-2021
+    Yes I keep this properly up to date.
+    **Update:**
+    The remove function was broken, it is now fixed 😎
+
+    **Addition:**
+    There now is `!levisteak` for counting levi deaths.
+    Also `!server` now exists which shows you the data Huggles is hoarding.
+
 20-jul-2020
     **Update:**
     `!cd` & `!remove` now tag you if you do not specifically mention a name

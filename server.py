@@ -8,3 +8,4 @@ class Server(object):
         self.channelID = channel
         self.list = list
         self.fishcounter = 0
+        self.levicounter = 0

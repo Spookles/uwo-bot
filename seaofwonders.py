@@ -138,7 +138,7 @@ class SeaOfWonders(commands.Cog):
             names = args
         for n in names:
             newNames.append(n.replace("!", ""))
-        await self.rm(newNames, rmIndex, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True, ctx, 0)
+        await self.rm(newNames, rmIndex, str(ctx.guild.id), self.servers[str(ctx.guild.id)].channelID, True, ctx)
 
     @commands.command(brief="Lists all players that have set their cooldowns", description="Shows an embed that tells you the cooldowns of everyone that is known.\nIt also shows the amount of time left till CD is finished.\nThis is all in server time, aka PDT.")
     async def list(self, ctx):
@@ -187,6 +187,17 @@ class SeaOfWonders(commands.Cog):
         await GlobalFunc.write(self.servers, "server_data")
 
     @commands.command(brief="", description="")
+    async def levisteak(self, ctx):
+        self.servers = await GlobalFunc.read("server_data")
+        levicounter = self.servers[str(ctx.guild.id)].levicounter
+        levicounter = int(levicounter)
+        levicounter += 1
+        levicounter = str(levicounter)
+        self.servers[str(ctx.guild.id)].levicounter = levicounter
+        await ctx.send("Good job, you killed Princess Elsa **{}** times".format(levicounter))
+        await GlobalFunc.write(self.servers, "server_data")
+
+    @commands.command(brief="", description="")
     async def how(self, ctx):
         embed = discord.Embed(colour=discord.Colour(0xff0000))
 
@@ -196,6 +207,24 @@ class SeaOfWonders(commands.Cog):
         embed.add_field(name="!list", value="List shows all the cooldowns of people that are registered. And when they run out.", inline=False)
         embed.add_field(name="!remove", value="You can remove yourself or others by doing **!remove Name Name ...**\nAgain names **must** be seperated by spaces.\nYou will automatically be removed from **!list** when your cooldown is over. You will also be notified when that happens.\n\nQuick use: **!remove**\nThis will only remove yourself.", inline=False)
 
+        await ctx.send(embed=embed)
+
+    @commands.command(brief="", description="")
+    async def server(self, ctx):
+        self.servers = await GlobalFunc.read("server_data")
+        totalruns = 0;
+        totalplayers = 0;
+        peopleInServer = ctx.guild.member_count
+        for user in self.servers[str(ctx.guild.id)].users:
+            totalruns += self.servers[str(ctx.guild.id)].users[user].runs
+            totalplayers += 1
+
+        embed = discord.Embed(title="All the information of this server!", description="Containing all runs from SoW, Huggles, Princess Elsa etc.", color=0x00ffcc)
+        embed.add_field(name="Everyone their runs combined", value="{} roughly {} runs".format(totalruns, round((totalruns/5))), inline=True)
+        embed.add_field(name="Fishers", value="{}/{}".format(totalplayers, peopleInServer), inline=True)
+        embed.add_field(name="Fishing data", value="_you murderers_", inline=False)
+        embed.add_field(name="Fishsticks", value=self.servers[str(ctx.guild.id)].fishcounter, inline=True)
+        embed.add_field(name="Levisteaks", value=self.servers[str(ctx.guild.id)].levicounter, inline=True)
         await ctx.send(embed=embed)
 
     @commands.command(brief="", description="")
